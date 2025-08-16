@@ -1,0 +1,192 @@
+# TheSolution CAD - 3D-Solution File Format
+# Version: 1.0
+# Created: 2024-12-19
+# Description: Файл системы 3D-Solution для сохранения 3D объектов
+
+[HEADER]
+format_version=1.0
+creation_date=2024-12-19T10:30:00
+author=TheSolution CAD System
+description=3D-Solution файл с примерами объектов
+units=millimeters
+
+[SETTINGS]
+coordinate_system=cartesian
+precision=0.001
+material_library=default
+render_quality=high
+
+[MATERIALS]
+material_1=Steel
+material_1_density=7.85
+material_1_color=#4682B4
+material_2=Aluminum
+material_2_density=2.7
+material_2_color=#C0C0C0
+material_3=Copper
+material_3_density=8.96
+material_3_color=#B87333
+
+[OBJECTS]
+# Объект 1: Примерный Куб
+object_1_name=Примерный Куб
+object_1_type=BOX
+object_1_id=001
+object_1_position_x=0.0
+object_1_position_y=0.0
+object_1_position_z=0.0
+object_1_rotation_a=0.0
+object_1_rotation_b=0.0
+object_1_rotation_c=0.0
+object_1_width=10.0
+object_1_height=10.0
+object_1_depth=10.0
+object_1_material=Steel
+object_1_volume=1000.0
+object_1_mass=7850.0
+object_1_visible=true
+object_1_locked=false
+
+# Объект 2: Примерная Сфера
+object_2_name=Примерная Сфера
+object_2_type=SPHERE
+object_2_id=002
+object_2_position_x=15.0
+object_2_position_y=0.0
+object_2_position_z=0.0
+object_2_rotation_a=0.0
+object_2_rotation_b=0.0
+object_2_rotation_c=0.0
+object_2_radius=5.0
+object_2_material=Aluminum
+object_2_volume=523.6
+object_2_mass=1413.7
+object_2_visible=true
+object_2_locked=false
+
+# Объект 3: Примерный Цилиндр
+object_3_name=Примерный Цилиндр
+object_3_type=CYLINDER
+object_3_id=003
+object_3_position_x=0.0
+object_3_position_y=15.0
+object_3_position_z=0.0
+object_3_rotation_a=0.0
+object_3_rotation_b=0.0
+object_3_rotation_c=0.0
+object_3_radius=3.0
+object_3_height=8.0
+object_3_material=Copper
+object_3_volume=226.2
+object_3_mass=2026.7
+object_3_visible=true
+object_3_locked=false
+
+[ASSEMBLIES]
+# Сборка 1: Основная сборка
+assembly_1_name=Основная сборка
+assembly_1_id=ASM001
+assembly_1_objects=001,002,003
+assembly_1_position_x=0.0
+assembly_1_position_y=0.0
+assembly_1_position_z=0.0
+assembly_1_rotation_a=0.0
+assembly_1_rotation_b=0.0
+assembly_1_rotation_c=0.0
+
+[CONSTRAINTS]
+# Ограничения между объектами
+constraint_1_type=distance
+constraint_1_object1=001
+constraint_1_object2=002
+constraint_1_value=15.0
+constraint_1_tolerance=0.1
+
+constraint_2_type=distance
+constraint_2_object1=001
+constraint_2_object2=003
+constraint_2_value=15.0
+constraint_2_tolerance=0.1
+
+[PROPERTIES]
+# Свойства системы
+total_objects=3
+total_assemblies=1
+total_constraints=2
+total_volume=1749.8
+total_mass=11290.4
+bounding_box_min_x=-5.0
+bounding_box_min_y=-5.0
+bounding_box_min_z=-5.0
+bounding_box_max_x=20.0
+bounding_box_max_y=20.0
+bounding_box_max_z=5.0
+
+[VIEW_SETTINGS]
+# Настройки отображения
+camera_position_x=50.0
+camera_position_y=50.0
+camera_position_z=30.0
+camera_target_x=7.5
+camera_target_y=7.5
+camera_target_z=0.0
+camera_up_x=0.0
+camera_up_y=0.0
+camera_up_z=1.0
+perspective=true
+field_of_view=45.0
+near_clip=0.1
+far_clip=1000.0
+
+[LIGHTING]
+# Настройки освещения
+light_1_type=directional
+light_1_position_x=1.0
+light_1_position_y=1.0
+light_1_position_z=1.0
+light_1_color=#FFFFFF
+light_1_intensity=1.0
+light_1_enabled=true
+
+light_2_type=ambient
+light_2_position_x=0.0
+light_2_position_y=0.0
+light_2_position_z=0.0
+light_2_color=#404040
+light_2_intensity=0.3
+light_2_enabled=true
+
+[ANNOTATIONS]
+# Аннотации и размеры
+annotation_1_type=linear_dimension
+annotation_1_start_x=0.0
+annotation_1_start_y=0.0
+annotation_1_start_z=0.0
+annotation_1_end_x=15.0
+annotation_1_end_y=0.0
+annotation_1_end_z=0.0
+annotation_1_text=15.0 мм
+annotation_1_visible=true
+
+annotation_2_type=radius_dimension
+annotation_2_center_x=15.0
+annotation_2_center_y=0.0
+annotation_2_center_z=0.0
+annotation_2_radius=5.0
+annotation_2_text=R5.0
+annotation_2_visible=true
+
+[HISTORY]
+# История изменений
+history_1_date=2024-12-19T10:30:00
+history_1_action=created
+history_1_description=Создан файл с примерами объектов
+history_1_user=system
+
+history_2_date=2024-12-19T10:35:00
+history_2_action=modified
+history_2_description=Добавлены материалы и свойства
+history_2_user=system
+
+[END]
+# Конец файла 3D-Solution
