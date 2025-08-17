@@ -1,83 +1,83 @@
 #!/usr/bin/env python3
 """
-Let's Do Solution - Быстрый доступ к решениям TheSolution CAD
-Простой интерфейс для работы с решениями
+Let's Do Solution - Quick access to TheSolution CAD solutions
+Simple interface for working with solutions
 """
 
 import sys
 from pathlib import Path
 
-# Добавляем пути к модулям
+# Add module paths
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root / "Base Solution" / "python"))
 sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "Root Solution" / "python"))
 
 def show_solutions_menu():
-    """Показать меню решений"""
+    """Show solutions menu"""
     print("🏗️ LET'S DO SOLUTION - TheSolution CAD")
     print("=" * 50)
-    print("Выберите решение для работы:")
+    print("Select a solution to work with:")
     print()
-    print("🎯 3D-Solution (ПРИОРИТЕТ)")
-    print("   1. Запустить 3D-Solution")
-    print("   2. Создать 3D объекты")
-    print("   3. Работа с геометрией")
+    print("🎯 3D-Solution (PRIORITY)")
+    print("   1. Launch 3D-Solution")
+    print("   2. Create 3D objects")
+    print("   3. Work with geometry")
     print()
     print("📐 2D-Solution")
-    print("   4. Запустить 2D-Solution")
-    print("   5. Создать чертежи")
+    print("   4. Launch 2D-Solution")
+    print("   5. Create drawings")
     print()
     print("🔧 Assembly-Solution")
-    print("   6. Запустить Assembly-Solution")
-    print("   7. Создать сборки")
+    print("   6. Launch Assembly-Solution")
+    print("   7. Create assemblies")
     print()
     print("📊 Analysis-Solution")
-    print("   8. Запустить Analysis-Solution")
-    print("   9. Анализ и расчеты")
+    print("   8. Launch Analysis-Solution")
+    print("   9. Analysis and calculations")
     print()
     print("🔄 Simulation-Solution")
-    print("   10. Запустить Simulation-Solution")
-    print("   11. Симуляция и тестирование")
+    print("   10. Launch Simulation-Solution")
+    print("   11. Simulation and testing")
     print()
     print("🏭 Manufacturing-Solution")
-    print("   12. Запустить Manufacturing-Solution")
-    print("   13. Производство и CAM")
+    print("   12. Launch Manufacturing-Solution")
+    print("   13. Manufacturing and CAM")
     print()
     print("📄 Documentation-Solution")
-    print("   14. Запустить Documentation-Solution")
-    print("   15. Документооборот")
+    print("   14. Launch Documentation-Solution")
+    print("   15. Documentation workflow")
     print()
     print("👥 Collaboration-Solution")
-    print("   16. Запустить Collaboration-Solution")
-    print("   17. Совместная работа")
+    print("   16. Launch Collaboration-Solution")
+    print("   17. Collaborative work")
     print()
-    print("🛠️ Инструменты")
+    print("🛠️ Tools")
     print("   18. Root Solution Launcher")
-    print("   19. Демонстрация возможностей")
-    print("   20. Тестирование системы")
+    print("   19. Capabilities demonstration")
+    print("   20. System testing")
     print()
-    print("❌ 0. Выход")
+    print("❌ 0. Exit")
     print()
 
 def launch_3d_solution():
-    """Запуск 3D-Solution"""
-    print("🎯 Запуск 3D-Solution...")
+    """Launch 3D-Solution"""
+    print("🎯 Launching 3D-Solution...")
     try:
         import subprocess
         subprocess.run([sys.executable, "Root Solution/3D-Solution/main_3d.py"])
     except Exception as e:
-        print(f"❌ Ошибка запуска: {e}")
+        print(f"❌ Launch error: {e}")
 
 def create_3d_objects():
-    """Создание 3D объектов"""
-    print("🔸 Создание 3D объектов...")
+    """Create 3D objects"""
+    print("🔸 Creating 3D objects...")
     try:
         from solution_data_types import SolutionType, SolutionDataUtils, SolutionCoordinate, SolutionMaterial
         
-        # Создаем куб
+        # Create a cube
         box = SolutionDataUtils.create_minimal_solution_data(
-            name="Мой Куб",
+            name="My Cube",
             solution_type=SolutionType.BOX,
             coordinate=SolutionCoordinate(0, 0, 0)
         )
@@ -86,57 +86,57 @@ def create_3d_objects():
         box.dimensions.depth = 10.0
         box.properties.material = SolutionMaterial(name="Steel", density=7.85)
         
-        # Создаем сферу
+        # Create a sphere
         sphere = SolutionDataUtils.create_minimal_solution_data(
-            name="Моя Сфера",
+            name="My Sphere",
             solution_type=SolutionType.SPHERE,
             coordinate=SolutionCoordinate(15, 0, 0)
         )
         sphere.dimensions.radius = 5.0
         sphere.properties.material = SolutionMaterial(name="Aluminum", density=2.7)
         
-        print(f"✅ Создан {box.properties.name} - объем: {box.dimensions.get_volume_box():.2f} куб.ед.")
-        print(f"✅ Создана {sphere.properties.name} - объем: {sphere.dimensions.get_volume_sphere():.2f} куб.ед.")
+        print(f"✅ Created {box.properties.name} - volume: {box.dimensions.get_volume_box():.2f} cubic units")
+        print(f"✅ Created {sphere.properties.name} - volume: {sphere.dimensions.get_volume_sphere():.2f} cubic units")
         
     except Exception as e:
-        print(f"❌ Ошибка создания объектов: {e}")
+        print(f"❌ Object creation error: {e}")
 
 def launch_root_launcher():
-    """Запуск Root Solution Launcher"""
-    print("🏗️ Запуск Root Solution Launcher...")
+    """Launch Root Solution Launcher"""
+    print("🏗️ Launching Root Solution Launcher...")
     try:
         import subprocess
         subprocess.run([sys.executable, "Root Solution/main.py"])
     except Exception as e:
-        print(f"❌ Ошибка запуска: {e}")
+        print(f"❌ Launch error: {e}")
 
 def run_demo():
-    """Запуск демонстрации"""
-    print("🎬 Запуск демонстрации...")
+    """Run demonstration"""
+    print("🎬 Running demonstration...")
     try:
         import subprocess
         subprocess.run([sys.executable, "demo_root_solution.py"])
     except Exception as e:
-        print(f"❌ Ошибка запуска: {e}")
+        print(f"❌ Launch error: {e}")
 
 def run_tests():
-    """Запуск тестов"""
-    print("🧪 Запуск тестов...")
+    """Run tests"""
+    print("🧪 Running tests...")
     try:
         import subprocess
         subprocess.run([sys.executable, "test_root_solution.py"])
     except Exception as e:
-        print(f"❌ Ошибка запуска: {e}")
+        print(f"❌ Launch error: {e}")
 
 def show_solution_info():
-    """Показать информацию о решениях"""
+    """Show information about solutions"""
     try:
         from root_solution_manager import get_root_manager
         
         manager = get_root_manager()
         solutions_info = manager.get_all_solutions_info()
         
-        print("📋 Информация о решениях:")
+        print("📋 Solutions information:")
         print("=" * 40)
         
         for name, info in solutions_info.items():
@@ -144,21 +144,21 @@ def show_solution_info():
             print(f"{status_icon} {name}: {info['description']}")
         
         active_count = len([s for s in solutions_info.values() if s["status"] == "active"])
-        print(f"\n📊 Активных решений: {active_count}/{len(solutions_info)}")
+        print(f"\n📊 Active solutions: {active_count}/{len(solutions_info)}")
         
     except Exception as e:
-        print(f"❌ Ошибка получения информации: {e}")
+        print(f"❌ Error getting information: {e}")
 
 def main():
-    """Главная функция"""
+    """Main function"""
     while True:
         show_solutions_menu()
         
         try:
-            choice = input("Введите номер выбора: ").strip()
+            choice = input("Enter your choice: ").strip()
             
             if choice == "0":
-                print("👋 До свидания!")
+                print("👋 Goodbye!")
                 break
             elif choice == "1":
                 launch_3d_solution()
@@ -173,17 +173,17 @@ def main():
             elif choice == "info":
                 show_solution_info()
             else:
-                print(f"⚠️ Функция {choice} пока не реализована")
-                print("Доступные функции: 1, 2, 18, 19, 20")
+                print(f"⚠️ Function {choice} is not implemented yet")
+                print("Available functions: 1, 2, 18, 19, 20")
             
-            input("\nНажмите Enter для продолжения...")
+            input("\nPress Enter to continue...")
             
         except KeyboardInterrupt:
-            print("\n👋 До свидания!")
+            print("\n👋 Goodbye!")
             break
         except Exception as e:
-            print(f"❌ Ошибка: {e}")
-            input("Нажмите Enter для продолжения...")
+            print(f"❌ Error: {e}")
+            input("Press Enter to continue...")
 
 if __name__ == "__main__":
     main()
