@@ -1,85 +1,123 @@
 #!/usr/bin/env python3
 """
-Тестирование OpenCASCADE в conda окружении
+Тест OpenCASCADE/PythonOCC
 """
 
-import sys
-import os
-
-print("🔍 Проверка доступности OpenCASCADE...")
-
-# Попытка импорта OpenCASCADE
-try:
-    from OCC.Core.BRepPrimAPI import BRepPrimAPI_MakeBox, BRepPrimAPI_MakeSphere
-    from OCC.Core.BRepAlgoAPI import BRepAlgoAPI_Fuse
-    from OCC.Core.BRepBuilderAPI import BRepBuilderAPI_Transform
-    from OCC.Core.gp import gp_Pnt, gp_Vec, gp_Trsf
-    from OCC.Core.TopoDS import TopoDS_Shape
-    from OCC.Core.BRepGProp import brepgprop_VolumeProperties
-    from OCC.Core.GProp import GProp_GProps
+def test_opencascade():
+    """Тестирование OpenCASCADE"""
+    print("🚀 Тестирование OpenCASCADE/PythonOCC")
+    print("=" * 50)
     
-    print("✅ OpenCASCADE успешно импортирован!")
+    # Тест 1: Импорт основных модулей
+    print("1. Тестирование импорта модулей...")
     
-    # Тестируем создание куба
-    print("🧪 Создание куба...")
-    box_maker = BRepPrimAPI_MakeBox(10.0, 10.0, 10.0)
-    box_shape = box_maker.Shape()
-    print(f"✅ Куб создан: {box_shape}")
+    try:
+        from OCC.Core.BRepPrimAPI import BRepPrimAPI_MakeBox
+        print("   ✅ BRepPrimAPI импортирован")
+    except ImportError as e:
+        print(f"   ❌ Ошибка импорта BRepPrimAPI: {e}")
+        return False
     
-    # Тестируем создание сферы
-    print("🧪 Создание сферы...")
-    sphere_maker = BRepPrimAPI_MakeSphere(5.0)
-    sphere_shape = sphere_maker.Shape()
-    print(f"✅ Сфера создана: {sphere_shape}")
+    try:
+        from OCC.Core.BRepPrimAPI import BRepPrimAPI_MakeSphere
+        print("   ✅ BRepPrimAPI_MakeSphere импортирован")
+    except ImportError as e:
+        print(f"   ❌ Ошибка импорта BRepPrimAPI_MakeSphere: {e}")
+        return False
     
-    # Тестируем вычисление объема
-    print("🧪 Вычисление объема куба...")
-    props = GProp_GProps()
-    brepgprop_VolumeProperties(box_shape, props)
-    volume = props.Mass()
-    print(f"✅ Объем куба: {volume}")
+    try:
+        from OCC.Core.BRepPrimAPI import BRepPrimAPI_MakeCylinder
+        print("   ✅ BRepPrimAPI_MakeCylinder импортирован")
+    except ImportError as e:
+        print(f"   ❌ Ошибка импорта BRepPrimAPI_MakeCylinder: {e}")
+        return False
     
-    # Тестируем трансформацию
-    print("🧪 Трансформация куба...")
-    trsf = gp_Trsf()
-    trsf.SetTranslation(gp_Vec(10.0, 0.0, 0.0))
-    transform = BRepBuilderAPI_Transform(box_shape, trsf)
-    transformed_shape = transform.Shape()
-    print(f"✅ Куб перемещен: {transformed_shape}")
+    # Тест 2: Создание простых геометрических объектов
+    print("\n2. Тестирование создания геометрических объектов...")
     
-    # Тестируем булеву операцию
-    print("🧪 Булева операция объединения...")
-    fuse = BRepAlgoAPI_Fuse(box_shape, sphere_shape)
-    if fuse.IsDone():
-        union_shape = fuse.Shape()
-        print(f"✅ Объединение выполнено: {union_shape}")
+    try:
+        # Создание куба
+        box_maker = BRepPrimAPI_MakeBox(10.0, 10.0, 10.0)
+        box = box_maker.Shape()
+        print("   ✅ Куб создан успешно")
         
-        # Вычисляем объем объединения
-        union_props = GProp_GProps()
-        brepgprop_VolumeProperties(union_shape, union_props)
-        union_volume = union_props.Mass()
-        print(f"✅ Объем объединения: {union_volume}")
-    else:
-        print("❌ Ошибка при выполнении булевой операции")
+        # Создание сферы
+        sphere_maker = BRepPrimAPI_MakeSphere(5.0)
+        sphere = sphere_maker.Shape()
+        print("   ✅ Сфера создана успешно")
+        
+        # Создание цилиндра
+        cylinder_maker = BRepPrimAPI_MakeCylinder(3.0, 8.0)
+        cylinder = cylinder_maker.Shape()
+        print("   ✅ Цилиндр создан успешно")
+        
+    except Exception as e:
+        print(f"   ❌ Ошибка создания объектов: {e}")
+        return False
     
-    print("\n🎉 Все тесты OpenCASCADE пройдены успешно!")
-    print("OpenCASCADE полностью функционален в данном окружении.")
+    # Тест 3: Проверка свойств объектов
+    print("\n3. Тестирование свойств объектов...")
     
-except ImportError as e:
-    print(f"❌ Ошибка импорта OpenCASCADE: {e}")
-    print("\n💡 Рекомендации:")
-    print("1. Убедитесь, что вы находитесь в conda окружении с OpenCASCADE")
-    print("2. Выполните: conda activate opencascade")
-    print("3. Проверьте установку: conda list | findstr occ")
-    print("4. Попробуйте переустановить: conda install -c conda-forge pythonocc-core")
+    try:
+        from OCC.Core.BRepGProp import brepgprop_VolumeProperties
+        from OCC.Core.GProp import GProp_GProps
+        
+        # Расчет объема куба
+        props = GProp_GProps()
+        brepgprop_VolumeProperties(box, props)
+        volume = props.Mass()
+        print(f"   ✅ Объем куба: {volume:.2f}")
+        
+        # Расчет объема сферы
+        props = GProp_GProps()
+        brepgprop_VolumeProperties(sphere, props)
+        volume = props.Mass()
+        print(f"   ✅ Объем сферы: {volume:.2f}")
+        
+        # Расчет объема цилиндра
+        props = GProp_GProps()
+        brepgprop_VolumeProperties(cylinder, props)
+        volume = props.Mass()
+        print(f"   ✅ Объем цилиндра: {volume:.2f}")
+        
+    except Exception as e:
+        print(f"   ❌ Ошибка расчета свойств: {e}")
+        return False
+    
+    # Тест 4: Проверка трансформаций
+    print("\n4. Тестирование трансформаций...")
+    
+    try:
+        from OCC.Core.gp import gp_Trsf, gp_Vec
+        from OCC.Core.BRepBuilderAPI import BRepBuilderAPI_Transform
+        
+        # Перемещение куба
+        trsf = gp_Trsf()
+        trsf.SetTranslation(gp_Vec(10, 0, 0))
+        transform = BRepBuilderAPI_Transform(box, trsf)
+        moved_box = transform.Shape()
+        print("   ✅ Трансформация куба выполнена")
+        
+    except Exception as e:
+        print(f"   ❌ Ошибка трансформации: {e}")
+        return False
+    
+    print("\n" + "=" * 50)
+    print("✅ Все тесты OpenCASCADE прошли успешно!")
+    print("🎉 OpenCASCADE готов к использованию в TheSolution CAD")
+    
+    return True
 
-except Exception as e:
-    print(f"❌ Ошибка при тестировании OpenCASCADE: {e}")
-    import traceback
-    traceback.print_exc()
+def main():
+    """Главная функция"""
+    try:
+        success = test_opencascade()
+        if success:
+            print("\n🚀 Можно продолжать разработку 3D-Solution!")
+        else:
+            print("\n❌ Есть проблемы с OpenCASCADE")
+    except Exception as e:
+        print(f"\n💥 Критическая ошибка: {e}")
 
-print(f"\nPython версия: {sys.version}")
-print(f"Python путь: {sys.executable}")
-print(f"Пути поиска модулей:")
-for path in sys.path[:5]:  # Показываем первые 5 путей
-    print(f"  {path}")
+if __name__ == "__main__":
+    main()

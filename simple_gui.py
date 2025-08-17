@@ -193,11 +193,11 @@ class MainWindow(QMainWindow):
         # Кнопки управления
         button_layout = QHBoxLayout()
         
-        self.create_box_btn = QPushButton("Создать куб")
+        self.create_box_btn = QPushButton("Create Cube")
         self.create_box_btn.clicked.connect(self.create_box)
         button_layout.addWidget(self.create_box_btn)
         
-        self.create_sphere_btn = QPushButton("Создать сферу")
+        self.create_sphere_btn = QPushButton("Create Sphere")
         self.create_sphere_btn.clicked.connect(self.create_sphere)
         button_layout.addWidget(self.create_sphere_btn)
         

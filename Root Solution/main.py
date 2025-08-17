@@ -84,11 +84,11 @@ class RootSolutionLauncher(QMainWindow):
         # Кнопки управления
         layout.addWidget(QLabel("Управление:"))
         
-        btn_launch_3d = QPushButton("🚀 Запустить 3D-Solution")
+        btn_launch_3d = QPushButton("🚀 Launch 3D-Solution")
         btn_launch_3d.clicked.connect(self.launch_3d_solution)
         layout.addWidget(btn_launch_3d)
         
-        btn_refresh = QPushButton("🔄 Обновить")
+        btn_refresh = QPushButton("🔄 Refresh")
         btn_refresh.clicked.connect(self.load_solutions_info)
         layout.addWidget(btn_refresh)
         
@@ -113,11 +113,11 @@ class RootSolutionLauncher(QMainWindow):
         # Кнопки управления решением
         layout.addWidget(QLabel("Действия:"))
         
-        btn_activate = QPushButton("✅ Активировать")
+        btn_activate = QPushButton("✅ Activate")
         btn_activate.clicked.connect(self.activate_selected_solution)
         layout.addWidget(btn_activate)
         
-        btn_deactivate = QPushButton("⏸️ Деактивировать")
+        btn_deactivate = QPushButton("⏸️ Deactivate")
         btn_deactivate.clicked.connect(self.deactivate_selected_solution)
         layout.addWidget(btn_deactivate)
         

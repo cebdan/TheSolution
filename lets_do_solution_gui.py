@@ -165,7 +165,7 @@ class LetsDoSolutionGUI(QMainWindow):
             self.resize(1200, 800)
             
         except Exception as e:
-            QMessageBox.critical(None, "Ошибка", f"Не удалось загрузить UI: {e}")
+            QMessageBox.critical(None, "Error", f"Failed to load UI: {e}")
             sys.exit(1)
     
     def setup_connections(self):
@@ -301,7 +301,7 @@ class LetsDoSolutionGUI(QMainWindow):
         sender = self.sender()
         if sender:
             button_text = sender.text()
-            QMessageBox.information(self, "🚧 Функция в разработке", 
+            QMessageBox.information(self, "🚧 Function in development", 
                                   f"Функция '{button_text}' пока не реализована.\n\n"
                                   "✅ Доступные функции:\n"
                                   "• 🚀 Запустить 3D-Solution\n"

@@ -3,7 +3,7 @@ description:
 globs:
 alwaysApply: false
 ---
-- Always update отчет_разработки.md when making changes
+- Always update DEVELOPMENT_REPORT.md when making changes
 - Use SolutionReal, SolutionString types from data_types/
 - Follow Root Solution architecture 
 - Focus on 3D-Solution development

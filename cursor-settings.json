@@ -23,7 +23,7 @@
   },
   
   "file_organization": {
-    "main_report": "отчет_разработки.md - ГЛАВНЫЙ файл проекта",
+    "main_report": "DEVELOPMENT_REPORT.md - ГЛАВНЫЙ файл проекта",
     "entry_point": "Let's do Solution.py - точка входа",
     "data_types": "data_types/ - система типов данных",
     "root_solutions": "Root Solution/ - все решения платформы",
@@ -32,7 +32,7 @@
   },
   
   "development_priorities": [
-    "1. ОБЯЗАТЕЛЬНО обновлять отчет_разработки.md при любых изменениях",
+    "1. ОБЯЗАТЕЛЬНО обновлять DEVELOPMENT_REPORT.md при любых изменениях",
     "2. Root Solution архитектура - 8 типов решений, фокус на 3D",
     "3. Система типов данных как основа всего",
     "4. Минимальное C++ ядро + Python-первый подход",
@@ -43,7 +43,7 @@
   "current_stage": "Этап 2: Root Solution инфраструктура + 3D ядро",
   
   "key_files_priority": [
-    "отчет_разработки.md",
+    "DEVELOPMENT_REPORT.md",
     "Let's do Solution.py",
     "Root Solution/3D-Solution/main_3d.py",
     "data_types/SolutionDataTypes.py",

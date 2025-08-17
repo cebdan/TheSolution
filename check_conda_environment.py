@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Скрипт для проверки conda окружения и установленных пакетов
-Особенно проверяет OpenCASCADE и другие компоненты для TheSolution
+Script for checking conda environment and installed packages
+Especially checks OpenCASCADE and other components for TheSolution
 """
 
 import sys
@@ -11,60 +11,60 @@ import os
 from pathlib import Path
 
 def run_command(command, check=True):
-    """Выполнить команду и вернуть результат"""
+    """Execute command and return result"""
     try:
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
         if check and result.returncode != 0:
-            print(f"Ошибка выполнения команды: {command}")
-            print(f"Ошибка: {result.stderr}")
+                    print(f"Command execution error: {command}")
+        print(f"Error: {result.stderr}")
             return False
         return result
     except Exception as e:
-        print(f"Исключение при выполнении команды {command}: {e}")
+        print(f"Exception when executing command {command}: {e}")
         return False
 
 def check_conda():
-    """Проверить conda и его окружения"""
-    print("🔍 Проверка conda...")
+    """Check conda and its environments"""
+    print("🔍 Checking conda...")
     
-    # Проверить conda
+    # Check conda
     result = run_command("conda --version", check=False)
     if result and result.returncode == 0:
-        print(f"✅ conda найден: {result.stdout.strip()}")
+        print(f"✅ conda found: {result.stdout.strip()}")
     else:
-        print("❌ conda не найден")
+        print("❌ conda not found")
         return False
     
-    # Список окружений
-    print("\n📋 Список conda окружений:")
+    # List of environments
+    print("\n📋 List of conda environments:")
     result = run_command("conda env list", check=False)
     if result and result.returncode == 0:
         print(result.stdout)
     else:
-        print("Не удалось получить список окружений")
+        print("Failed to get list of environments")
     
-    # Активное окружение
-    print("\n🎯 Активное окружение:")
+    # Active environment
+    print("\n🎯 Active environment:")
     result = run_command("conda info --envs", check=False)
     if result and result.returncode == 0:
         lines = result.stdout.split('\n')
         for line in lines:
             if '*' in line:
-                print(f"Активное: {line}")
+                print(f"Active: {line}")
                 break
     
     return True
 
 def check_installed_packages():
-    """Проверить установленные пакеты"""
-    print("\n📦 Проверка установленных пакетов...")
+    """Check installed packages"""
+    print("\n📦 Checking installed packages...")
     
-    # Список всех установленных пакетов
+            # List of all installed packages
     result = run_command("conda list", check=False)
     if result and result.returncode == 0:
         packages = result.stdout.split('\n')
         
-        # Ищем важные пакеты
+        # Look for important packages
         important_packages = [
             'opencascade', 'occt', 'opencascade-occt',
             'qt', 'pyside', 'pyside6',
@@ -81,27 +81,27 @@ def check_installed_packages():
                     break
         
         if found_packages:
-            print("✅ Найденные важные пакеты:")
+            print("✅ Found important packages:")
             for pkg in found_packages:
                 print(f"  {pkg}")
         else:
-            print("ℹ️ Важные пакеты не найдены")
+            print("ℹ️ Important packages not found")
         
-        # Поиск OpenCASCADE
-        print("\n🔍 Поиск OpenCASCADE...")
+        # Search for OpenCASCADE
+        print("\n🔍 Searching for OpenCASCADE...")
         opencascade_found = False
         for package in packages:
             if 'opencascade' in package.lower() or 'occt' in package.lower():
-                print(f"✅ Найден: {package.strip()}")
+                print(f"✅ Found: {package.strip()}")
                 opencascade_found = True
         
         if not opencascade_found:
-            print("❌ OpenCASCADE не найден в conda")
-            print("   Попробуйте установить: conda install -c conda-forge opencascade")
+            print("❌ OpenCASCADE not found in conda")
+            print("   Try installing: conda install -c conda-forge opencascade")
         
         return opencascade_found
     else:
-        print("❌ Не удалось получить список пакетов")
+        print("❌ Failed to get package list")
         return False
 
 def check_opencascade_installation():

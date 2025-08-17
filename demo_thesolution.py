@@ -1,101 +1,101 @@
 #!/usr/bin/env python3
 """
-Демонстрация возможностей TheSolution CAD системы
+TheSolution CAD System Capabilities Demonstration
 
-Показывает все основные функции и компоненты системы
+Shows all main functions and components of the system
 """
 
 import sys
 import os
 from datetime import datetime
 
-# Добавляем путь к модулям проекта
+# Add project modules path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'Base Solution', 'python'))
 
 def print_header():
-    """Выводит заголовок демонстрации"""
+    """Print demonstration header"""
     print("=" * 60)
-    print("🚀 TheSolution CAD - Демонстрация возможностей")
+    print("🚀 TheSolution CAD - Capabilities Demonstration")
     print("=" * 60)
-    print(f"Время запуска: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Start time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print()
 
 def demo_basic_system():
-    """Демонстрирует базовую систему"""
-    print("📋 1. Базовая система Solution")
+    """Demonstrate basic system"""
+    print("📋 1. Basic Solution System")
     print("-" * 40)
     
     try:
         from solution_coordinate import SolutionCoordinate
         from base_solution import Solution
         
-        # Создание координат
+        # Create coordinates
         coord1 = SolutionCoordinate(10, 20, 30)
         coord2 = SolutionCoordinate(5, 5, 5, 2.0, 1.5, 0.5)
         
-        print(f"✅ Координаты созданы:")
-        print(f"   Координаты 1: {coord1}")
-        print(f"   Координаты 2: {coord2}")
+        print(f"✅ Coordinates created:")
+        print(f"   Coordinates 1: {coord1}")
+        print(f"   Coordinates 2: {coord2}")
         
-        # Создание объектов
-        root = Solution("Корневой объект", coord1)
-        child1 = Solution("Дочерний 1", coord2)
-        child2 = Solution("Дочерний 2", SolutionCoordinate(0, 10, 0))
+        # Create objects
+        root = Solution("Root object", coord1)
+        child1 = Solution("Child 1", coord2)
+        child2 = Solution("Child 2", SolutionCoordinate(0, 10, 0))
         
-        # Построение иерархии
+        # Build hierarchy
         root.add_child(child1)
         root.add_child(child2)
         
-        print(f"✅ Иерархия создана:")
-        print(f"   Корневой объект: {root.name}")
-        print(f"   Дочерние элементы: {len(root.get_children())}")
-        print(f"   Всего потомков: {len(root.get_descendants())}")
+        print(f"✅ Hierarchy created:")
+        print(f"   Root object: {root.name}")
+        print(f"   Child elements: {len(root.get_children())}")
+        print(f"   Total descendants: {len(root.get_descendants())}")
         
-        # Работа с координатами
+        # Work with coordinates
         child1.x = 50
         abs_coord = child1.get_absolute_coordinate()
-        print(f"✅ Координаты обновлены:")
-        print(f"   Новые координаты child1: x={child1.x}")
-        print(f"   Абсолютные координаты: {abs_coord}")
+        print(f"✅ Coordinates updated:")
+        print(f"   New coordinates child1: x={child1.x}")
+        print(f"   Absolute coordinates: {abs_coord}")
         
         return True
         
     except Exception as e:
-        print(f"❌ Ошибка базовой системы: {e}")
+        print(f"❌ Basic system error: {e}")
         return False
 
 def demo_geometry():
-    """Демонстрирует геометрические операции"""
-    print("\n📐 2. Геометрические операции")
+    """Demonstrate geometric operations"""
+    print("\n📐 2. Geometric Operations")
     print("-" * 40)
     
     try:
         from geometry_operations import GeometryOperations, SolutionCoordinate
         
-        # Создание геометрических объектов
-        box = GeometryOperations.create_box("Демо куб", 10, 10, 10, SolutionCoordinate(0, 0, 0))
-        sphere = GeometryOperations.create_sphere("Демо сфера", 5, SolutionCoordinate(15, 0, 0))
-        cylinder = GeometryOperations.create_cylinder("Демо цилиндр", 3, 8, SolutionCoordinate(0, 15, 0))
+        # Create geometric objects
+        box = GeometryOperations.create_box("Demo cube", 10, 10, 10, SolutionCoordinate(0, 0, 0))
+        sphere = GeometryOperations.create_sphere("Demo sphere", 5, SolutionCoordinate(15, 0, 0))
+        cylinder = GeometryOperations.create_cylinder("Demo cylinder", 3, 8, SolutionCoordinate(0, 15, 0))
         
-        print(f"✅ Геометрические объекты созданы:")
-        print(f"   Куб объем: {box.get_volume():.2f}")
-        print(f"   Сфера объем: {sphere.get_volume():.2f}")
-        print(f"   Цилиндр объем: {cylinder.get_volume():.2f}")
+        print(f"✅ Geometric objects created:")
+        print(f"   Cube volume: {box.get_volume():.2f}")
+        print(f"   Sphere volume: {sphere.get_volume():.2f}")
+        print(f"   Cylinder volume: {cylinder.get_volume():.2f}")
         
-        # Создание сборки
-        assembly = Solution("Демо сборка")
+        # Create assembly
+        assembly = Solution("Demo assembly")
         assembly.add_child(box)
         assembly.add_child(sphere)
         assembly.add_child(cylinder)
         
-        print(f"✅ Сборка создана:")
-        print(f"   Компонентов: {len(assembly.get_children())}")
-        print(f"   Общий объем: {sum(child.get_volume() for child in assembly.get_children()):.2f}")
+        print(f"✅ Assembly created:")
+        print(f"   Components: {len(assembly.get_children())}")
+        print(f"   Total volume: {sum(child.get_volume() for child in assembly.get_children()):.2f}")
         
         return True
         
     except Exception as e:
-        print(f"❌ Ошибка геометрии: {e}")
+        print(f"❌ Geometry error: {e}")
         return False
 
 def demo_gui():

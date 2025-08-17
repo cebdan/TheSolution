@@ -12,16 +12,39 @@ def check_conda_opencascade():
     print("🔍 Проверка OpenCASCADE в conda...")
     
     try:
-        result = subprocess.run("conda list | grep -i opencascade", shell=True, capture_output=True, text=True)
+        # Проверяем pythonocc-core (основной пакет)
+        result = subprocess.run("conda list | findstr -i pythonocc", shell=True, capture_output=True, text=True)
         if result.returncode == 0 and result.stdout.strip():
-            print("✅ OpenCASCADE найден в conda:")
+            print("✅ PythonOCC найден в conda:")
             print(result.stdout.strip())
             return True
-        else:
-            print("❌ OpenCASCADE не найден в conda")
-            return False
+        
+        # Проверяем occt (альтернативное название)
+        result = subprocess.run("conda list | findstr -i occt", shell=True, capture_output=True, text=True)
+        if result.returncode == 0 and result.stdout.strip():
+            print("✅ OCCT найден в conda:")
+            print(result.stdout.strip())
+            return True
+            
+        print("❌ OpenCASCADE/PythonOCC не найден в conda")
+        return False
     except Exception as e:
         print(f"Ошибка проверки conda: {e}")
+        return False
+
+def check_python_import():
+    """Проверить импорт PythonOCC"""
+    print("\n🔍 Проверка импорта PythonOCC...")
+    
+    try:
+        import OCC
+        print(f"✅ PythonOCC импортирован успешно: {OCC.__version__}")
+        return True
+    except ImportError as e:
+        print(f"❌ Ошибка импорта PythonOCC: {e}")
+        return False
+    except Exception as e:
+        print(f"❌ Неожиданная ошибка при импорте: {e}")
         return False
 
 def check_pip_opencascade():
@@ -29,7 +52,7 @@ def check_pip_opencascade():
     print("\n🔍 Проверка OpenCASCADE в pip...")
     
     try:
-        result = subprocess.run("pip list | grep -i opencascade", shell=True, capture_output=True, text=True)
+        result = subprocess.run("pip list | findstr -i opencascade", shell=True, capture_output=True, text=True)
         if result.returncode == 0 and result.stdout.strip():
             print("✅ OpenCASCADE найден в pip:")
             print(result.stdout.strip())
@@ -59,19 +82,21 @@ def check_system_opencascade():
 def suggest_installation():
     """Предложить установку"""
     print("\n💡 Для установки OpenCASCADE выполните:")
-    print("1. conda install -c conda-forge opencascade")
-    print("2. Или скачайте с https://dev.opencascade.org/release")
+    print("1. conda install -c conda-forge pythonocc-core")
+    print("2. Или conda install -c conda-forge opencascade")
+    print("3. Или скачайте с https://dev.opencascade.org/release")
 
 def main():
     print("🚀 Быстрая проверка OpenCASCADE")
     print("=" * 40)
     
     conda_ok = check_conda_opencascade()
+    import_ok = check_python_import()
     pip_ok = check_pip_opencascade()
     system_ok = check_system_opencascade()
     
     print("\n" + "=" * 40)
-    if conda_ok or pip_ok or system_ok:
+    if conda_ok or pip_ok or system_ok or import_ok:
         print("✅ OpenCASCADE найден! Можно продолжать разработку.")
     else:
         print("❌ OpenCASCADE не найден. Установите его для полной функциональности.")
