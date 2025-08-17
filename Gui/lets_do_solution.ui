@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
+    <width>1465</width>
     <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>TheSolution CAD - Let&apos;s Do Solution</string>
+   <string>TheSolution CAD - Let's Do Solution</string>
   </property>
   <property name="styleSheet">
    <string notr="true">/* Основные стили */
@@ -167,7 +167,7 @@ QProgressBar::chunk {
        <item>
         <widget class="QLabel" name="titleLabel">
          <property name="text">
-          <string>🎯 Let&apos;s Do Solution</string>
+          <string>🎯 Let's Do Solution</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -186,7 +186,7 @@ QProgressBar::chunk {
        </item>
        <item>
         <widget class="QTreeWidget" name="solutionsTree">
-         <property name="headerLabel">
+         <property name="headerLabel" stdset="0">
           <string>Решения</string>
          </property>
          <column>
@@ -234,8 +234,8 @@ QProgressBar::chunk {
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>598</width>
-            <height>698</height>
+            <width>709</width>
+            <height>692</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -261,7 +261,7 @@ QProgressBar::chunk {
               <item>
                <widget class="QPushButton" name="launch3DButton">
                 <property name="text">
-                 <string>🚀 Запустить 3D-Solution</string>
+                 <string>🚀 3D-Solution</string>
                 </property>
                </widget>
               </item>
@@ -648,7 +648,7 @@ QProgressBar::chunk {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1200</width>
+     <width>1465</width>
      <height>21</height>
     </rect>
    </property>

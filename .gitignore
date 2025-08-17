@@ -113,7 +113,7 @@ debug_*.py
 simple_*_test.py
 quick_check_*.py
 
-# Alternative GUIs (replaced by lets_do_solution_gui.py)
+# Alternative GUIs (replaced by lets_do_solution.py)
 simple_gui.py
 3d_solution_file_handler.py
 

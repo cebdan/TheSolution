@@ -6,7 +6,7 @@
 
 ```bash
 # Запуск GUI приложения
-python lets_do_solution_gui.py
+python lets_do_solution.py
 
 # Консольный интерфейс (альтернатива)
 python lets_do_solution.py
@@ -110,7 +110,7 @@ python lets_do_solution.py
 
 ### Файлы
 - **`lets_do_solution.ui`** - Qt Designer UI файл
-- **`lets_do_solution_gui.py`** - Python код приложения
+- **`lets_do_solution.py`** - Python код приложения
 - **`lets_do_solution.py`** - Консольная версия
 
 ### Зависимости

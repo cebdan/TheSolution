@@ -74,7 +74,7 @@ pip install -r requirements.txt
 python check_conda_environment.py
 
 # Запуск системы
-python lets_do_solution_gui.py
+python lets_do_solution.py
 ```
 
 ## ⚙️ Детальная установка
@@ -223,22 +223,19 @@ print(f'Система типов данных работает! Создан о
 
 ## 🚀 Запуск системы
 
-### Основной запуск (рекомендуется)
+### Запуск системы
 ```bash
 # Активация окружения
 conda activate thesolution
 
 # Запуск главного GUI
-python lets_do_solution_gui.py
+python lets_do_solution.py
 ```
 
 ### Альтернативный запуск
 ```bash
-# Текстовый интерфейс
-python lets_do_solution.py
-
 # Прямой запуск 3D-Solution
-python 3d_solution_gui.py
+python Root Solution/3D-Solution/main.py
 ```
 
 ### Запуск с проверкой OpenCASCADE
@@ -345,7 +342,7 @@ python -c "import sys; print('\n'.join(sys.path))"
 ### Логи и отладка
 ```bash
 # Запуск с подробным выводом
-python -v lets_do_solution_gui.py
+python -v lets_do_solution.py
 
 # Проверка переменных окружения
 echo $PATH
@@ -355,4 +352,4 @@ echo $PYTHONPATH
 ---
 
 **Статус**: ✅ **УСТАНОВКА ЗАВЕРШЕНА**
-**Следующий шаг**: Запуск `python lets_do_solution_gui.py`
+**Следующий шаг**: Запуск `python lets_do_solution.py`

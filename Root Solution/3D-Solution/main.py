@@ -11,8 +11,19 @@ import threading
 from datetime import datetime
 from typing import Dict, Any, Optional
 
-# Add project path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Add project paths
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))  # Go up to project root
+
+# Check if the calculated path is correct, otherwise use current working directory
+if not os.path.exists(os.path.join(project_root, "solution_data_types.py")):
+    cwd = os.getcwd()
+    if os.path.exists(os.path.join(cwd, "solution_data_types.py")):
+        project_root = cwd
+
+sys.path.insert(0, project_root)
+sys.path.insert(0, os.path.join(project_root, "Base Solution", "python"))
+sys.path.insert(0, os.path.join(project_root, "Root Solution", "python"))
 
 try:
     from PySide6.QtWidgets import (
@@ -35,6 +46,23 @@ try:
         OCC_AVAILABLE = False
         print("WARNING: OpenCASCADE integration not available")
     
+    # Import 3D visualization system
+    try:
+        from visualization_3d import Visualization3D, LineStyle, GradientType, MaterialType, ColorScheme
+        from visualization_dialog import VisualizationDialog
+        VISUALIZATION_AVAILABLE = True
+    except ImportError:
+        VISUALIZATION_AVAILABLE = False
+        print("WARNING: 3D visualization system not available")
+
+    # Import 3D view widget
+    try:
+        from integrated_3d_view import Integrated3DViewManager
+        OCC_3D_VIEW_AVAILABLE = True
+    except ImportError:
+        OCC_3D_VIEW_AVAILABLE = False
+        print("WARNING: OpenCASCADE 3D view not available")
+
     print("SUCCESS: All imports successful")
     
 except ImportError as e:
@@ -130,16 +158,78 @@ class TheSolution3DWindow(QMainWindow):
         self.object_counter = 0
         self.creation_threads = []  # List of active threads
         
-        self.init_ui()
+        # Initialize visualization settings
+        self.visualization_settings = {}
+        if VISUALIZATION_AVAILABLE:
+            self.visualization_settings = {
+                'material_type': MaterialType.METAL,
+                'transparency': 0.0,
+                'base_color': (0.8, 0.8, 0.9),
+                'gradient_type': GradientType.NONE,
+                'gradient_intensity': 50,
+                'line_style': LineStyle.SOLID,
+                'line_width': 1.0,
+                'line_color': (0.8, 0.8, 0.8),
+                'show_edges': True,
+                'show_vertices': False,
+                'wireframe_mode': False,
+                'color_scheme': ColorScheme.CLASSIC,
+                'show_grid': True,
+                'grid_spacing': 1.0,
+                'grid_size': 20.0,
+                'show_axes': True,
+                'show_labels': True
+            }
+        
+        self.init_ui_from_file()
         self.setup_styles()
         
         # Check OpenCASCADE availability
         self.check_opencascade()
+        
+        # Initialize 3D view
+        self.init_3d_view()
     
-    def init_ui(self):
-        """Initialize interface"""
+    def init_ui_from_file(self):
+        """Initialize interface from UI file"""
         self.setWindowTitle("TheSolution CAD - 3D-Solution")
         self.setGeometry(100, 100, 1400, 900)
+        
+        # Load UI from file
+        try:
+            from PySide6.QtUiTools import QUiLoader
+            ui_file_path = os.path.join(project_root, "Gui", "3D-Solution", "main.ui")
+            
+            if os.path.exists(ui_file_path):
+                loader = QUiLoader()
+                with open(ui_file_path, "r") as ui_file:
+                    self.ui = loader.load(ui_file, self)
+                
+                # Get references to UI elements
+                self.solution_tree = self.ui.solutionTree
+                self.view_toolbar = self.ui.viewToolBar
+                self.view_status_bar = self.ui.viewStatusBar
+                self.open_gl_widget = self.ui.openGLWidget
+                
+                # Setup UI elements
+                self.setup_ui_elements()
+                
+                print("✅ UI loaded from file successfully")
+            else:
+                print(f"❌ UI file not found: {ui_file_path}")
+                self.create_fallback_ui()
+                
+        except Exception as e:
+            print(f"❌ Failed to load UI from file: {e}")
+            self.create_fallback_ui()
+    
+    def create_fallback_ui(self):
+        """Create fallback UI if file loading fails"""
+        self.setWindowTitle("TheSolution CAD - 3D-Solution (Fallback)")
+        self.setGeometry(100, 100, 1400, 900)
+        
+        # Create menu bar
+        self.create_menu_bar()
         
         # Create central widget
         central_widget = QWidget()
@@ -163,6 +253,127 @@ class TheSolution3DWindow(QMainWindow):
         
         # Set splitter proportions
         splitter.setSizes([300, 600, 500])
+    
+    def setup_ui_elements(self):
+        """Setup UI elements after loading from file"""
+        # Setup solution tree
+        self.solution_tree.setHeaderLabels(["Name", "Type", "ID", "Volume"])
+        self.solution_tree.setColumnWidth(0, 120)
+        self.solution_tree.setColumnWidth(1, 80)
+        self.solution_tree.setColumnWidth(2, 60)
+        self.solution_tree.setColumnWidth(3, 80)
+        
+        # Setup toolbar
+        self.setup_toolbar()
+    
+    def setup_toolbar(self):
+        """Setup toolbar for 3D view controls"""
+        if not hasattr(self, 'view_toolbar'):
+            return
+        
+        # Clear existing actions
+        self.view_toolbar.clear()
+        
+        # Add basic actions (will be enhanced by 3D view manager)
+        self.action_fit_all = QAction("Fit All", self)
+        self.action_fit_all.triggered.connect(self.fit_all_objects)
+        self.view_toolbar.addAction(self.action_fit_all)
+        
+        self.action_reset_view = QAction("Reset View", self)
+        self.action_reset_view.triggered.connect(self.reset_view)
+        self.view_toolbar.addAction(self.action_reset_view)
+    
+    def fit_all_objects(self):
+        """Fit all objects to view"""
+        if hasattr(self, 'occ_3d_view_manager'):
+            self.occ_3d_view_manager.fit_all()
+    
+    def reset_view(self):
+        """Reset view to default"""
+        if hasattr(self, 'occ_3d_view_manager'):
+            self.occ_3d_view_manager.reset_view()
+        
+        # Setup status bar
+        self.view_status_bar.showMessage("Ready")
+        
+        # Create menu bar
+        self.create_menu_bar()
+    
+    def create_menu_bar(self):
+        """Create menu bar with visualization settings"""
+        menubar = self.menuBar()
+        
+        # File menu
+        file_menu = menubar.addMenu('File')
+        
+        # Edit menu
+        edit_menu = menubar.addMenu('Edit')
+        
+        # View menu
+        view_menu = menubar.addMenu('View')
+        
+        # Add visualization settings action
+        if VISUALIZATION_AVAILABLE:
+            visualization_action = view_menu.addAction('3D Visualization Settings')
+            visualization_action.triggered.connect(self.show_visualization_dialog)
+        
+        # Help menu
+        help_menu = menubar.addMenu('Help')
+    
+    def init_3d_view(self):
+        """Initialize integrated 3D view"""
+        if OCC_3D_VIEW_AVAILABLE:
+            # Create integrated 3D view manager
+            self.occ_3d_view_manager = Integrated3DViewManager(self)
+            
+            # Setup UI references if UI was loaded from file
+            if hasattr(self, 'view_toolbar') and hasattr(self, 'view_status_bar') and hasattr(self, 'solution_tree') and hasattr(self, 'open_gl_widget'):
+                self.occ_3d_view_manager.setup_ui_references(
+                    self.view_toolbar,
+                    self.view_status_bar,
+                    self.solution_tree,
+                    self.open_gl_widget
+                )
+            
+            # Initialize OpenCASCADE display
+            if self.occ_3d_view_manager.initialize_occ_display():
+                print("✅ Integrated 3D view initialized successfully")
+                
+                # Connect signals
+                self.occ_3d_view_manager.object_selected.connect(self.on_3d_object_selected)
+                self.occ_3d_view_manager.object_moved.connect(self.on_3d_object_moved)
+                self.occ_3d_view_manager.object_rotated.connect(self.on_3d_object_rotated)
+                self.occ_3d_view_manager.object_scaled.connect(self.on_3d_object_scaled)
+                self.occ_3d_view_manager.selection_changed.connect(self.on_3d_selection_changed)
+            else:
+                print("❌ Failed to initialize integrated 3D view")
+        else:
+            print("⚠️ OpenCASCADE 3D view not available")
+    
+    def on_3d_object_selected(self, object_id: str):
+        """Handle object selection in 3D view"""
+        print(f"Object selected in 3D view: {object_id}")
+        # Update UI to reflect selection
+    
+    def on_3d_object_moved(self, object_id: str, x: float, y: float, z: float):
+        """Handle object movement in 3D view"""
+        print(f"Object moved in 3D view: {object_id} to ({x}, {y}, {z})")
+        # Update object data and UI
+    
+    def on_3d_object_rotated(self, object_id: str, rx: float, ry: float, rz: float):
+        """Handle object rotation in 3D view"""
+        print(f"Object rotated in 3D view: {object_id} to ({rx}, {ry}, {rz})")
+        # Update object data and UI
+    
+    def on_3d_object_scaled(self, object_id: str, sx: float, sy: float, sz: float):
+        """Handle object scaling in 3D view"""
+        print(f"Object scaled in 3D view: {object_id} to ({sx}, {sy}, {sz})")
+        # Update object data and UI
+    
+    def on_3d_selection_changed(self, selected_objects: list):
+        """Handle selection change in 3D view"""
+        print(f"Selection changed in 3D view: {selected_objects}")
+        # Update UI to reflect selection
     
     def create_left_panel(self, parent):
         """Create left panel with object tree"""
@@ -226,25 +437,53 @@ class TheSolution3DWindow(QMainWindow):
         title_label.setFont(QFont("Arial", 14, QFont.Bold))
         center_layout.addWidget(title_label)
         
-        # Placeholder for 3D view
-        self.view_label = QLabel("3D View Area\n(OpenCASCADE visualization coming soon)")
-        self.view_label.setAlignment(Qt.AlignCenter)
-        self.view_label.setStyleSheet("""
-            QLabel {
-                background-color: #2c3e50;
-                color: white;
-                border: 2px solid #34495e;
-                border-radius: 10px;
-                padding: 20px;
-                font-size: 16px;
-            }
-        """)
-        center_layout.addWidget(self.view_label)
+        # 3D View area - will be handled by integrated manager
+        if OCC_3D_VIEW_AVAILABLE:
+            # Placeholder for integrated 3D view
+            self.view_label = QLabel("3D View Area\n(Integrated OpenCASCADE view)")
+            self.view_label.setAlignment(Qt.AlignCenter)
+            self.view_label.setStyleSheet("""
+                QLabel {
+                    background-color: #2c3e50;
+                    color: white;
+                    border: 2px solid #34495e;
+                    border-radius: 10px;
+                    padding: 20px;
+                    font-size: 16px;
+                }
+            """)
+            center_layout.addWidget(self.view_label)
+            
+            # Status label
+            self.occ_status_label = QLabel("OpenCASCADE 3D View: Will be initialized")
+            self.occ_status_label.setAlignment(Qt.AlignCenter)
+            center_layout.addWidget(self.occ_status_label)
+        else:
+            # Fallback to placeholder
+            self.view_label = QLabel("3D View Area\n(OpenCASCADE visualization coming soon)")
+            self.view_label.setAlignment(Qt.AlignCenter)
+            self.view_label.setStyleSheet("""
+                QLabel {
+                    background-color: #2c3e50;
+                    color: white;
+                    border: 2px solid #34495e;
+                    border-radius: 10px;
+                    padding: 20px;
+                    font-size: 16px;
+                }
+            """)
+            center_layout.addWidget(self.view_label)
+            
+            # OpenCASCADE status
+            self.occ_status_label = QLabel("OpenCASCADE: Not available")
+            self.occ_status_label.setAlignment(Qt.AlignCenter)
+            center_layout.addWidget(self.occ_status_label)
         
-        # OpenCASCADE status
-        self.occ_status_label = QLabel("OpenCASCADE: Checking...")
-        self.occ_status_label.setAlignment(Qt.AlignCenter)
-        center_layout.addWidget(self.occ_status_label)
+        # Visualization settings button
+        if VISUALIZATION_AVAILABLE:
+            self.visualization_btn = QPushButton("3D Visualization Settings")
+            self.visualization_btn.clicked.connect(self.show_visualization_dialog)
+            center_layout.addWidget(self.visualization_btn)
         
         parent.addWidget(center_widget)
     
@@ -408,6 +647,51 @@ class TheSolution3DWindow(QMainWindow):
             self.occ_status_label.setStyleSheet("color: #e74c3c; font-weight: bold;")
             self.log_message("OpenCASCADE integration not available")
     
+    def show_visualization_dialog(self):
+        """Show 3D visualization settings dialog"""
+        if not VISUALIZATION_AVAILABLE:
+            QMessageBox.warning(self, "Warning", "3D visualization system is not available.")
+            return
+        
+        try:
+            dialog = VisualizationDialog(self)
+            dialog.settings_changed.connect(self.apply_visualization_settings)
+            dialog.exec()
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to open visualization dialog: {e}")
+    
+    def apply_visualization_settings(self, settings: Dict[str, Any]):
+        """Apply visualization settings to 3D view"""
+        try:
+            self.log_message("Applying 3D visualization settings...")
+            
+            # Store current settings
+            self.visualization_settings = settings
+            
+            # Update 3D view with new settings
+            self.update_3d_view_with_settings(settings)
+            
+            # Update real 3D view if available
+            self.update_3d_view_visualization(settings)
+            
+            self.log_message("✅ 3D visualization settings applied successfully")
+            
+        except Exception as e:
+            self.log_message(f"❌ Failed to apply visualization settings: {e}")
+    
+    def update_3d_view_with_settings(self, settings: Dict[str, Any]):
+        """Update 3D view with visualization settings"""
+        # This would integrate with actual 3D rendering
+        # For now, just update the placeholder
+        material_type = settings.get('material_type', 'Metal')
+        gradient_type = settings.get('gradient_type', 'None')
+        line_style = settings.get('line_style', 'Solid')
+        
+        self.view_label.setText(f"3D View Area\nMaterial: {material_type}\nGradient: {gradient_type}\nLine Style: {line_style}")
+        
+        # Update status
+        self.occ_status_label.setText(f"3D Visualization: {material_type} + {gradient_type}")
+    
     def create_object(self, obj_type: SolutionType):
         """Create object of specified type"""
         self.object_counter += 1
@@ -471,6 +755,10 @@ class TheSolution3DWindow(QMainWindow):
         
         self.object_tree.addTopLevelItem(item)
         
+        # Add to 3D view if available
+        if OCC_3D_VIEW_AVAILABLE and hasattr(self, 'occ_3d_view_manager') and 'shape' in object_data:
+            self.add_object_to_3d_view(object_data)
+        
         # Hide progress
         self.progress_bar.setVisible(False)
         
@@ -478,6 +766,85 @@ class TheSolution3DWindow(QMainWindow):
         occ_status = "with OpenCASCADE" if object_data.get('occ_available', False) else "without OpenCASCADE"
         volume_info = f" (Volume: {object_data.get('volume', 0):.2f})" if 'volume' in object_data else ""
         self.log_message(f"✅ Created {object_data['name']} {occ_status}{volume_info}")
+    
+    def add_object_to_3d_view(self, object_data: Dict[str, Any]):
+        """Add object to 3D view"""
+        if not OCC_3D_VIEW_AVAILABLE or not hasattr(self, 'occ_3d_view_manager'):
+            return
+        
+        try:
+            # Get shape from object data
+            shape = object_data.get('shape')
+            if shape is None:
+                self.log_message(f"❌ No shape data for object {object_data['id']}")
+                return
+            
+            # Get visualization settings
+            settings = self.visualization_settings if hasattr(self, 'visualization_settings') else {}
+            
+            # Get position from object data
+            position = (object_data.get('x', 0), object_data.get('y', 0), object_data.get('z', 0))
+            rotation = (0, 0, 0)  # Default rotation
+            scale = (1, 1, 1)     # Default scale
+            
+            # Add to 3D view
+            success = self.occ_3d_view_manager.add_shape(
+                shape=shape,
+                object_id=str(object_data['id']),
+                color=settings.get('base_color', (0.8, 0.8, 0.9)),
+                material_type=settings.get('material_type', MaterialType.METAL),
+                line_style=settings.get('line_style', LineStyle.SOLID),
+                gradient_type=settings.get('gradient_type', GradientType.NONE),
+                transparency=settings.get('transparency', 0.0),
+                position=position,
+                rotation=rotation,
+                scale=scale
+            )
+            
+            if success:
+                self.log_message(f"✅ Added object {object_data['id']} to 3D view")
+            else:
+                self.log_message(f"❌ Failed to add object {object_data['id']} to 3D view")
+                
+        except Exception as e:
+            self.log_message(f"❌ Error adding object to 3D view: {e}")
+    
+    def remove_object_from_3d_view(self, object_id: str):
+        """Remove object from 3D view"""
+        if not OCC_3D_VIEW_AVAILABLE or not hasattr(self, 'occ_3d_view_manager'):
+            return
+        
+        try:
+            success = self.occ_3d_view_manager.remove_shape(object_id)
+            if success:
+                self.log_message(f"✅ Removed object {object_id} from 3D view")
+            else:
+                self.log_message(f"❌ Failed to remove object {object_id} from 3D view")
+                
+        except Exception as e:
+            self.log_message(f"❌ Error removing object from 3D view: {e}")
+    
+    def update_3d_view_visualization(self, settings: Dict[str, Any]):
+        """Update 3D view visualization settings"""
+        if not OCC_3D_VIEW_AVAILABLE or not hasattr(self, 'occ_3d_view_manager'):
+            return
+        
+        try:
+            # Update all objects in 3D view
+            for object_id in self.occ_3d_view_manager.ais_shapes.keys():
+                self.occ_3d_view_manager.update_shape_visualization(
+                    object_id=object_id,
+                    color=settings.get('color'),
+                    material_type=settings.get('material_type'),
+                    line_style=settings.get('line_style'),
+                    gradient_type=settings.get('gradient_type'),
+                    transparency=settings.get('transparency')
+                )
+            
+            self.log_message("✅ Updated 3D view visualization settings")
+            
+        except Exception as e:
+            self.log_message(f"❌ Error updating 3D view visualization: {e}")
     
     def on_creation_failed(self, error_message: str):
         """Handle object creation error"""
@@ -495,6 +862,10 @@ class TheSolution3DWindow(QMainWindow):
         
         object_id = int(current_item.text(2))
         object_name = current_item.text(0)
+        
+        # Remove from 3D view if available
+        if OCC_3D_VIEW_AVAILABLE and hasattr(self, 'occ_3d_view_manager'):
+            self.remove_object_from_3d_view(str(object_id))
         
         # Remove from dictionary
         if object_id in self.objects:
